@@ -188,20 +188,37 @@
         const audioControl = document.getElementById('audioControl');
         const audioIcon = audioControl.querySelector('i');
 
-        // Reproducir música automáticamente cuando se carga la página
-        window.addEventListener('load', () => {
-            audio.play();
+        // Reproducir automáticamente cuando la página cargue
+        window.addEventListener('DOMContentLoaded', () => {
+            // Intentar reproducir el audio
+            audio.play().then(() => {
+                audioIcon.className = 'fas fa-pause';
+            }).catch((error) => {
+                // Si falla el autoplay (políticas del navegador)
+                console.log('Autoplay prevented:', error);
+                audioIcon.className = 'fas fa-play';
+            });
         });
 
         function togglePlay() {
             if (audio.paused) {
-                audio.play();
-                audioIcon.className = 'fas fa-pause';
+                audio.play().then(() => {
+                    audioIcon.className = 'fas fa-pause';
+                });
             } else {
                 audio.pause();
                 audioIcon.className = 'fas fa-play';
             }
         }
+
+        // Actualizar el ícono si el audio se detiene por cualquier razón
+        audio.addEventListener('pause', () => {
+            audioIcon.className = 'fas fa-play';
+        });
+
+        audio.addEventListener('play', () => {
+            audioIcon.className = 'fas fa-pause';
+        });
     </script>
 </body>
 </html>
